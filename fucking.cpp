@@ -35,6 +35,8 @@ void* send_udp_packets(void* arg) {
     char payload[PAYLOAD_SIZE];
     std::string random_string;
 
+    std::cout << "Thread started for sending UDP packets...\n"; // Log when the thread starts
+
     if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
         perror("Socket creation failed");
         pthread_exit(nullptr);
@@ -100,13 +102,14 @@ void* send_udp_packets(void* arg) {
     }
 
     close(sock);
+    std::cout << "Thread finished sending UDP packets.\n";  // Log when the thread ends
     pthread_exit(nullptr);
 }
 
 int main(int argc, char *argv[]) {
 
     if (argc < 2) {
-        std::cerr << "Usage: ./raja <ip> <port> <duration>\n";
+        std::cerr << "Usage: ./BINARY <ip> <port> <duration>\n";
         return 1;
     }
 
@@ -127,7 +130,9 @@ int main(int argc, char *argv[]) {
     // Using a fixed thread count here (for example, 100 threads)
     int thread_count = 100;
     std::vector<pthread_t> threads(thread_count);
+    
     for (int i = 0; i < thread_count; ++i) {
+        std::cout << "Launching thread " << i + 1 << "...\n"; // Log before each thread creation
         if (pthread_create(&threads[i], nullptr, send_udp_packets, &params) != 0) {
             perror("Thread creation failed");
             return 1;
